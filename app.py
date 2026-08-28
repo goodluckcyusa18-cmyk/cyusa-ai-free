@@ -1,19 +1,17 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS
 import os
 
 app = Flask(__name__)
-CORS(app)
 
 @app.route("/")
 def home():
-    html_code = """
+    return """
 <!DOCTYPE html>
 <html>
 <head><meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
 body{margin:0;background:#0f172a;color:white;font-family:Arial}
-.header{background:#1e293b;padding:15px;text-align:center;font-weight:bold}
+.header{background:#1e293b;padding:15px;text-align:center}
 .chat{padding:15px;height:70vh;overflow-y:auto}
 .msg{padding:10px;margin:8px;border-radius:10px;max-width:80%}
 .ai{background:#334155}.user{background:#2563eb;margin-left:auto}
@@ -23,8 +21,8 @@ button{padding:12px 20px;border-radius:20px;border:none;background:#2563eb;color
 </style>
 </head>
 <body>
-<div class="header"><h2 style="margin:0">CYUSA AI Uganda</h2></div>
-<div class="chat" id="chat"><div class="msg ai">Muraho! I am CYUSA AI - Ugandas First AI by Goodluck! How can I help?</div></div>
+<div class="header"><h2>CYUSA AI Uganda</h2></div>
+<div class="chat" id="chat"><div class="msg ai">Muraho! I am CYUSA AI - Ugandas First AI by Goodluck!</div></div>
 <div class="bar"><input id="inp" placeholder="Ask CYUSA..."><button onclick="send()">Send</button></div>
 <script>
 async function send(){
@@ -44,21 +42,18 @@ document.getElementById('inp').addEventListener('keypress',function(e){if(e.key=
 </body>
 </html>
 """
-    return html_code
 
 @app.route("/chat", methods=["POST"])
 def chat():
     try:
         from groq import Groq
         api_key = os.environ.get("GROQ_API_KEY")
-        if not api_key:
-            return jsonify({"reply":"GROQ_API_KEY not found"})
         client = Groq(api_key=api_key)
         msg = request.json.get("message","")
         comp = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
             messages=[
-                {"role":"system","content":"You are CYUSA AI, Ugandas First AI created by Goodluck. Be helpful, friendly."},
+                {"role":"system","content":"You are CYUSA AI, Ugandas First AI by Goodluck."},
                 {"role":"user","content":msg}
             ],
             max_tokens=500
